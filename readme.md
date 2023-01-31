@@ -1,5 +1,5 @@
 ## 1. Instruction
-Code for submission (Retiring $\Delta \text{DP}$: Brand-New Metrics for Demographic Parity)
+Code for submission (Retiring $\Delta \text{DP}$: New Distribution-Level Metrics for Demographic Parity)
 
 
 ## 2. Python package
