@@ -9,15 +9,12 @@ In this paper, we rethink the rationale of $\Delta DP$ and investigate its limit
 1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** 
 <p align="center">
 <img width="600" src="./figure/intro.jpg">
-<br>
-  Figure 1
-</p>
-2. **$\Delta DP_b$ value is highly correlated to the selection of the threshold for the classification task.** 
+
+
+2. **$\Delta DP$ value is highly correlated to the selection of the threshold for the classification task.** 
+
 <p align="center">
 <img width="600" src="./figure/adult_pdf_cdf.jpg">
-<br>
-    Figure 2
-</p>
 
 
 
@@ -27,12 +24,13 @@ We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**ro
 ```math
     ABPC = TV(f_0(x), f_1(x)) = ∫_{0}^{1}|f_0(x) - f_1(x) | dx,
  ```
+
 ```math
     ABCC = TV(F_0(x), F_1(x)) = ∫_{0}^{1}|F_0(x) - F_1(x)| dx,
 ```
  **ABPC** and **ABCC** have following advantages:
  
- 1.  zero-value  **ABPC**/**ABCC** is a necessary and sufficient condition to achieve demographic parity.
+ 1. Zero-value  **ABPC**/**ABCC** is a necessary and sufficient condition to achieve demographic parity.
  
  2. The prediction independency to sensitive attributes can be guaranteed over any threshold. 
 
@@ -111,7 +109,7 @@ def ABCC( y_pred, y_gt, z_values, sample_n = 10000 ):
     return abcc
 ```
 
-# Citation
+# 3. Citation
 Please kindly cite the following paper if you found our code helpful!
 ```bibtex
   @article{han2023retiring,
