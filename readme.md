@@ -1,56 +1,47 @@
-Implmentation for TMLR paper: `MLPInit: Embarrassingly Simple GNN Training Acceleration with MLP Initialization`, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
+Implmentation for TMLR paper: `Retiring $\Delta \text{DP}$: New Distribution-Level Metrics for Demographic Parity`, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
 
-# Introduction
+# 1. Introduction
 
 Lots of fairness definitions (e.g., demographic parity, equalized opportunity) has been proposed to solve different types of fairness issues. In this paper, we focus on the measurement of demographic parity, $\Delta DP$, which requires the predictions of a machine learning model should be independent on sensitive attributes.
 
-## Drawbacks of commonly used $\Delta DP$ 
+## 1.1 Drawbacks of commonly used $\Delta DP$ 
 In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups. We argue that $\Delta DP$, as a metric, has the following drawbacks:
-1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** One fundamental requirement for the demographic parity metric is that the zero-value metric must be equivalent to the achievement of demographic parity, and vice versa. However, zero-value $\Delta DP$ does not indicate the establishment of demographic parity since $\Delta DP$ is a necessary but insufficient condition for demographic parity. An illustration of ACS-Income data is shown in Figure 1, to demonstrate that $\Delta DP$ fails to assess the violation of demographic parity since it reaches (nearly) zero on an unfair model (the middle subfigure Figure 1). 
+1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** 
 <p align="center">
 <img width="600" src="./figure/intro.jpg">
 <br>
   Figure 1
 </p>
-3. **The value of $\Delta DP$ does not accurately quantify the violation of demographic parity and the level of fairness.** Different values of the same metric should represent different levels of unfairness, which is still true even in a monotonously transformed space. $\Delta DP$ does not satisfy this property, resulting in it being unable to compare the level of fairness based solely on its value.
-4. **$\Delta DP_b$ value is highly correlated to the selection of the threshold for the classification task.** To make a decision based on predictive probability, one predefined threshold is needed. If the threshold for downstream tasks changes, the proportion of positive predictions of different groups will change accordingly, resulting in a change in $\Delta DP_b$. The selection of the threshold greatly affects the value of $\Delta DP_b$ as in Figure 2 shown below:
+2. **$\Delta DP_b$ value is highly correlated to the selection of the threshold for the classification task.** 
 <p align="center">
 <img width="600" src="./figure/adult_pdf_cdf.jpg">
 <br>
     Figure 2
 </p>
-One specific $\Delta DP_b=0$ can not guarantee demographic parity under the on-the-fly threshold change. 
 
 
 
-## The Proposed **ABPC** & **ABCC**
+## 1.2 The Proposed **ABPC** & **ABCC**
 
-We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$, respectively. We formally define two distribution-level metrics to measure the violation of demographic parity. **ABPC** is defined as the total variation distance (TV) between probability density functions (PDFs) with different sensitive attribute groups as follows: 
+We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$ as follows: 
 ```math
     ABPC = TV(f_0(x), f_1(x)) = ∫_{0}^{1}|f_0(x) - f_1(x) | dx,
  ```
-where $f_0(x)$ and $f_1(x)$ are the PDFs of the predictive probability of different demographic groups. 
-Similarly, **ABCC** is defined as the total variation between prediction cumulative density functions (CDFs) with different sensitive attribute groups as follows:
 ```math
     ABCC = TV(F_0(x), F_1(x)) = ∫_{0}^{1}|F_0(x) - F_1(x)| dx,
 ```
  **ABPC** and **ABCC** have following advantages:
  
- 1. They satisfy two criterias: Sufficiency and Fidelity, which guarantee the correctness of measuring demographic parity. Sufficiency requires that zero-value fairness
-metric must be a necessary and sufficient condition to achieve demographic parity. Fidelity requiresd that the metric should accurately reflect the degree of unfairness, and the difference of such a metric indicates the fairness gap in terms of demograph.
+ 1.  zero-value  **ABPC**/**ABCC** is a necessary and sufficient condition to achieve demographic parity.
  
- 2. The prediction independency to sensitive attributes can be guaranteed over any threshold, while $\Delta DP$ can only guarantee independence over a specific threshold. 
- 
- 3. More important, **ABPC** and **ABCC** can guarantee estimation tractability from limited data samples. 
-
-The proposed metrics can be easily extended to the multi-value sensitive attribute setting. Suppose the sensitive attribute has $m$ values, then we compute the \textsf{ABPC} of each pair of groups with different sensitive attributes and then average them. \textsf{ABCC} for multi-value sensitive attributes with $m$ values can also be computed in a similar way. Since the $m$ is small in practice, the computational complexity is acceptable.
+ 2. The prediction independency to sensitive attributes can be guaranteed over any threshold. 
 
 
 
-# Implementation 
+# 2. Implementation 
 
 
-## 1. Python package
+## 2.1 Python package
 ```
 torch                         1.10.0
 statsmodels                   0.13.1
@@ -60,7 +51,7 @@ numpy                         1.21.2
 aif360                        0.4.0
 ```
 
-## 2. Run cmd 
+## 2.2 Run cmd 
 run the following commands at current directy
 ```
 bash run.sh
@@ -72,7 +63,7 @@ CUDA_VISIBLE_DEVICES=0 python -u ./src/bs_tabular_reg.py --data_path ./data/adul
 CUDA_VISIBLE_DEVICES=0 python -u ./src/bs_tabular_adv.py --data_path ./data/adult --dataset adult --sensitive_attr sex --exp_name adult_adv --batch_size 256 --epoch 40 --seed 31314 --lam 170
 ```
 
-## 3. Python Implementation for ABPC and ABCC
+## 2.3 Python Implementation for ABPC and ABCC
 ```python
 def ABPC( y_pred, y_gt, z_values, bw_method = "scott", sample_n = 5000 ):
 
@@ -97,7 +88,6 @@ def ABPC( y_pred, y_gt, z_values, bw_method = "scott", sample_n = 5000 ):
 
 ```
 
-
 ```python
 def ABCC( y_pred, y_gt, z_values, sample_n = 10000 ):
 
@@ -119,4 +109,15 @@ def ABCC( y_pred, y_gt, z_values, sample_n = 10000 ):
     abcc = np.trapz(np.abs(ecdf0_x - ecdf1_x), x)
 
     return abcc
+```
+
+# Citation
+Please kindly cite the following paper if you found our code helpful!
+```bibtex
+  @article{han2023retiring,
+    title={Retiring $$\backslash$Delta $ DP: New Distribution-Level Metrics for Demographic Parity},
+    author={Han, Xiaotian and Jiang, Zhimeng and Jin, Hongye and Liu, Zirui and Zou, Na and Wang, Qifan and Hu, Xia},
+    journal={arXiv preprint arXiv:2301.13443},
+    year={2023}
+  }
 ```
