@@ -6,62 +6,44 @@ Lots of fairness definitions (e.g., demographic parity, equalized opportunity) h
 
 ## Drawbacks of commonly used $\Delta DP$ 
 In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups. We argue that $\Delta DP$, as a metric, has the following drawbacks:
-- **First, zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** One fundamental requirement for the demographic parity metric is that the zero-value metric must be equivalent to the achievement of demographic parity, and vice versa. However, zero-value $\Delta DP$ does not indicate the establishment of demographic parity since $\Delta DP$ is a necessary but insufficient condition for demographic parity. An illustration of ACS-Income data is shown in \cref{fig:intro} to demonstrate that $\Delta DP$ fails to assess the violation of demographic parity since it reaches (nearly) zero on an unfair model (the middle subfigure in \cref{fig:intro}). 
-- **Second, the value of $\Delta DP$ does not accurately quantify the violation of demographic parity and the level of fairness.** Different values of the same metric should represent different levels of unfairness, which is still true even in a monotonously transformed space. $\Delta DP$ does not satisfy this property, resulting in it being unable to compare the level of fairness based solely on its value.
-- **Third, $\Delta DP_b$ value is highly correlated to the selection of the threshold for the classification task.** To make a decision based on predictive probability, one predefined threshold is needed. If the threshold for downstream tasks changes, the proportion of positive predictions of different groups will change accordingly, resulting in a change in $\Delta DP_b$. The selection of the threshold greatly affects the value of $\Delta DP_b$ (validated by:
+1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** One fundamental requirement for the demographic parity metric is that the zero-value metric must be equivalent to the achievement of demographic parity, and vice versa. However, zero-value $\Delta DP$ does not indicate the establishment of demographic parity since $\Delta DP$ is a necessary but insufficient condition for demographic parity. An illustration of ACS-Income data is shown in Figure 1, to demonstrate that $\Delta DP$ fails to assess the violation of demographic parity since it reaches (nearly) zero on an unfair model (the middle subfigure Figure 1). 
 <p align="center">
-<img width="600" src="./figure/income_pdf_cdf.png>
+<img width="600" src="./figure/intro.jpg">
+<br>
+  Figure 1
 </p>
-
-
+3. **The value of $\Delta DP$ does not accurately quantify the violation of demographic parity and the level of fairness.** Different values of the same metric should represent different levels of unfairness, which is still true even in a monotonously transformed space. $\Delta DP$ does not satisfy this property, resulting in it being unable to compare the level of fairness based solely on its value.
+4. **$\Delta DP_b$ value is highly correlated to the selection of the threshold for the classification task.** To make a decision based on predictive probability, one predefined threshold is needed. If the threshold for downstream tasks changes, the proportion of positive predictions of different groups will change accordingly, resulting in a change in $\Delta DP_b$. The selection of the threshold greatly affects the value of $\Delta DP_b$ as in Figure 2 shown below:
 <p align="center">
-<img width="600" src="./figure/adult_pdf_cdf.jpg>
+<img width="600" src="./figure/adult_pdf_cdf.jpg">
+<br>
+    Figure 2
 </p>
-
 One specific $\Delta DP_b=0$ can not guarantee demographic parity under the on-the-fly threshold change. 
 
 
 
 ## The Proposed **ABPC** & **ABCC**
 
-We propose two distribution-level metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$, respectively.
-
-The advantage is that such independence can be guaranteed over any threshold, while $\Delta DP$ can only guarantee independence over a specific threshold.
-
-The proposed metrics satisfy all (or partial) two criteria to guarantee the correctness of measuring demographic parity and address the limitations of the existing metrics, as well as estimation tractability from limited data samples. 
-
-We further propose two distribution-level metrics, **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to resolve the limitations of $\Delta DP$, which are theoretically and empirically capable of measuring the violation of demographic parity.
-
-
-n view of the drawbacks of fairness metrics ∆DP for demographic parity, we first propose two criteria to
-theoretically guide the development of the metric on demographic parity: 1) Sufficiency: zero-value fairness
-metric must be a necessary and sufficient condition to achieve demographic parity. 2) Fidelity: The metric
-should accurately reflect the degree of unfairness, and the difference of such a metric indicates the fairness
-gap in terms of demograph
-
-In this section, we formally define two distribution-level metrics to measure the violation of demographic parity. \textsf{ABPC} is defined as the total variation distance ($TV$) between probability density functions with different sensitive attribute groups as follows:
-$$
-    \mathsf{\textsf{ABPC}} = TV(f_0(x), f_1(x)) = \int_{0}^{1}\left|f_0(x) - f_1(x) \right| \mathrm{d}x,
-$$
-where $f_0(x)$ and $f_1(x)$ are the PDFs of the predictive probability of different demographic groups. Similarly, \textsf{ABCC} is defined as the total variation between prediction cumulative density functions with different sensitive attribute groups as follows:
-$$
-    \mathsf{\textsf{ABCC}} = TV(F_0(x), F_1(x)) = \int_{0}^{1}\left|F_0(x) - F_1(x) \right| \mathrm{d}x,
-$$
-where $F_0(x)$ and $F_1(x)$ are the CDF of the predictive probability of demographic groups.
-
-Note that the proposed metrics can be easily extended to the multi-value sensitive attribute setting. Suppose the sensitive attribute has $m$ values, then we compute the \textsf{ABPC} of each pair of groups with different sensitive attributes and then average them. \textsf{ABCC} for multi-value sensitive attributes with $m$ values can also be computed in a similar way. Since the $m$ is small in practice, the computational complexity is acceptable.
-
-In this section, we formally define two distribution-level metrics to measure the violation of demographic parity. **ABPC** is defined as the total variation distance (TV) between probability density functions with different sensitive attribute groups as follows: 
-$$
+We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$, respectively. We formally define two distribution-level metrics to measure the violation of demographic parity. **ABPC** is defined as the total variation distance (TV) between probability density functions (PDFs) with different sensitive attribute groups as follows: 
+```math
     ABPC = TV(f_0(x), f_1(x)) = ∫_{0}^{1}|f_0(x) - f_1(x) | dx,
-$$    
+ ```
 where $f_0(x)$ and $f_1(x)$ are the PDFs of the predictive probability of different demographic groups. 
-Similarly, **ABCC** is defined as the total variation between prediction cumulative density functions with different sensitive attribute groups as follows:
-$$
+Similarly, **ABCC** is defined as the total variation between prediction cumulative density functions (CDFs) with different sensitive attribute groups as follows:
+```math
     ABCC = TV(F_0(x), F_1(x)) = ∫_{0}^{1}|F_0(x) - F_1(x)| dx,
-$$
-where $F_0(x)$ and $F_1(x)$ are the CDF of the predictive probability of demographic groups. 
+```
+ **ABPC** and **ABCC** have following advantages:
+ 
+ 1. They satisfy two criterias: Sufficiency and Fidelity, which guarantee the correctness of measuring demographic parity. Sufficiency requires that zero-value fairness
+metric must be a necessary and sufficient condition to achieve demographic parity. Fidelity requiresd that the metric should accurately reflect the degree of unfairness, and the difference of such a metric indicates the fairness gap in terms of demograph.
+ 
+ 2. The prediction independency to sensitive attributes can be guaranteed over any threshold, while $\Delta DP$ can only guarantee independence over a specific threshold. 
+ 
+ 3. More important, **ABPC** and **ABCC** can guarantee estimation tractability from limited data samples. 
 
+The proposed metrics can be easily extended to the multi-value sensitive attribute setting. Suppose the sensitive attribute has $m$ values, then we compute the \textsf{ABPC} of each pair of groups with different sensitive attributes and then average them. \textsf{ABCC} for multi-value sensitive attributes with $m$ values can also be computed in a similar way. Since the $m$ is small in practice, the computational complexity is acceptable.
 
 
 
