@@ -8,7 +8,7 @@ Lots of fairness definitions (e.g., demographic parity, equalized opportunity) h
 In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups. We argue that $\Delta DP$, as a metric, has the following drawbacks:
 1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** 
 <p align="center">
-<img width="600" src="./figure/intro.jpg">
+<img width="600" src="./figure/adult_pdf.jpg">
 
 
 2. **$\Delta DP$ value is highly correlated to the selection of the threshold for the classification task.** 
