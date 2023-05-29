@@ -1,9 +1,13 @@
+html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
 Implmentation for TMLR paper: `MLPInit: Embarrassingly Simple GNN Training Acceleration with MLP Initialization`, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
 
 # Introduction
 
 Lots of fairness definitions (e.g., demographic parity, equalized opportunity) has been proposed to solve different types of fairness issues. In this paper, we focus on the measurement of demographic parity, $\Delta DP$, which requires the predictions of a machine learning model should be independent on sensitive attributes.
 
+## Drawbacks of commonly used $\Delta DP$ 
 In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups. We argue that $\Delta DP$, as a metric, has the following drawbacks:
 - **First, zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** One fundamental requirement for the demographic parity metric is that the zero-value metric must be equivalent to the achievement of demographic parity, and vice versa. However, zero-value $\Delta DP$ does not indicate the establishment of demographic parity since $\Delta DP$ is a necessary but insufficient condition for demographic parity. An illustration of ACS-Income data is shown in \cref{fig:intro} to demonstrate that $\Delta DP$ fails to assess the violation of demographic parity since it reaches (nearly) zero on an unfair model (the middle subfigure in \cref{fig:intro}). 
 - **Second, the value of $\Delta DP$ does not accurately quantify the violation of demographic parity and the level of fairness.** Different values of the same metric should represent different levels of unfairness, which is still true even in a monotonously transformed space. $\Delta DP$ does not satisfy this property, resulting in it being unable to compare the level of fairness based solely on its value.
@@ -20,13 +24,8 @@ In this paper, we rethink the rationale of $\Delta DP$ and investigate its limit
 One specific $\Delta DP_b=0$ can not guarantee demographic parity under the on-the-fly threshold change. 
 
 
-In view of the drawbacks of fairness metrics $\Delta DP$ for demographic parity, we first propose **two criterie** to theoretically guide the development of the metric on demographic parity: 
-1. Sufficiency:
-Zero-value fairness metric must be a necessary and sufficient condition to achieve demographic parity. 
-2. Fidelity: 
-The metric should accurately reflect the degree of unfairness, and the difference of such a metric indicates the fairness gap in terms of demographic parity. To bridge the gap between the criteria and the current demographic parity metric,
 
-
+## The Proposed **ABPC** & **ABCC**
 
 We propose two distribution-level metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$, respectively.
 
@@ -34,23 +33,37 @@ The advantage is that such independence can be guaranteed over any threshold, wh
 
 The proposed metrics satisfy all (or partial) two criteria to guarantee the correctness of measuring demographic parity and address the limitations of the existing metrics, as well as estimation tractability from limited data samples. 
 
-Moreover, we also re-evaluate the mainstream fair models with our proposed metrics. Our main contributions are as follows:
+We further propose two distribution-level metrics, **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to resolve the limitations of $\Delta DP$, which are theoretically and empirically capable of measuring the violation of demographic parity.
 
-- We theoretically and experimentally reveal that the existing metric $\Delta DP$ for demographic parity cannot precisely measure the violation of demographic parity, because it inherently has fundamental drawbacks: i) zero-value $\Delta DP$ does not guarantee zero bias, ii) $\Delta DP$ value does not accurately quantify the violation of demographic parity and iii) $\Delta DP$ value is different for varying thresholds.
 
-- Motivated by the above observations, we formally established two criteria that a desirable metric on demographic parity should satisfy. This provides a guideline to assess other fairness metrics.
+n view of the drawbacks of fairness metrics ∆DP for demographic parity, we first propose two criteria to
+theoretically guide the development of the metric on demographic parity: 1) Sufficiency: zero-value fairness
+metric must be a necessary and sufficient condition to achieve demographic parity. 2) Fidelity: The metric
+should accurately reflect the degree of unfairness, and the difference of such a metric indicates the fairness
+gap in terms of demograph
 
-- We further propose two distribution-level metrics, **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to resolve the limitations of $\Delta DP$, which are theoretically and empirically capable of measuring the violation of demographic parity.
+In this section, we formally define two distribution-level metrics to measure the violation of demographic parity. \textsf{ABPC} is defined as the total variation distance ($TV$) between probability density functions with different sensitive attribute groups as follows:
+\begin{equation} \label{eq:ABPC}
+    \mathsf{\textsf{ABPC}} = TV(f_0(x), f_1(x)) = \int_{0}^{1}\left|f_0(x) - f_1(x) \right| \mathrm{d}x,
+\end{equation}
+where $f_0(x)$ and $f_1(x)$ are the PDFs of the predictive probability of different demographic groups. Similarly, \textsf{ABCC} is defined as the total variation between prediction cumulative density functions with different sensitive attribute groups as follows:
+\begin{equation}\label{eq:ABCC}
+    \mathsf{\textsf{ABCC}} = TV(F_0(x), F_1(x)) = \int_{0}^{1}\left|F_0(x) - F_1(x) \right| \mathrm{d}x,
+\end{equation}
+where $F_0(x)$ and $F_1(x)$ are the CDF of the predictive probability of demographic groups.
 
-- We re-evaluate the mainstream fair models with our proposed metrics, ABPC and ABCC, and re-assess their fairness performance on real-world datasets. Experimental results show that the inherent tension between fairness and accuracy is stronger, which has been underestimated previously.
+Note that the proposed metrics can be easily extended to the multi-value sensitive attribute setting. Suppose the sensitive attribute has $m$ values, then we compute the \textsf{ABPC} of each pair of groups with different sensitive attributes and then average them. \textsf{ABCC} for multi-value sensitive attributes with $m$ values can also be computed in a similar way. Since the $m$ is small in practice, the computational complexity is acceptable.
 
-It is worth noting that instead of invalidating the fairness definition of demographic parity, we claim that the current widely used metrics for demographic parity (i.e., $\Delta DP_b$ and $\Delta DP_c$) cannot precisely reflect the violation of demographic parity. In our paper, to precisely measure the violation of demographic parity, we propose two new and reasonable metrics, ABPC and ABCC, to measure the violation of demographic parity.
+In this section, we formally define two distribution-level metrics to measure the violation of demographic parity. **ABPC** is defined as the total variation distance (TV) between probability density functions with different sensitive attribute groups as follows: 
+ABPC = TV(f_0(x), f_1(x)) = ∫_{0}^{1}|f_0(x) - f_1(x) | dx,    
+where $f_0(x)$ and $f_1(x)$ are the PDFs of the predictive probability of different demographic groups. 
+Similarly, **ABCC** is defined as the total variation between prediction cumulative density functions with different sensitive attribute groups as follows:
+ 
+ABCC = TV(F_0(x), F_1(x)) = ∫_{0}^{1}|F_0(x) - F_1(x)| dx,
+where $F_0(x)$ and $F_1(x)$ are the CDF of the predictive probability of demographic groups. 
 
-In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$^1, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, used in papers [1,2]) and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups, used in papers [3,4,5,6]). We argue that $\Delta DP$, as a metric, has the following drawbacks:
 
-First, zero-value $\Delta DP$ does not guarantee zero violation of demographic parity. One fundamental requirement for the demographic parity metric is that the zero-value metric must be equivalent to the achievement of demographic parity, and vice versa. However, zero-value $\Delta DP$ does not indicate the establishment of demographic parity since $\Delta DP$ is a necessary but insufficient condition for demographic parity.
 
-Second, the value of $\Delta DP$ does not accurately quantify the violation of demographic parity and the level of fairness. Different values of the same metric should represent different levels of unfairness, which is still true even in a monotonously transformed space. $\Delta DP$ does not satisfy this property,
 
 # Implementation 
 
