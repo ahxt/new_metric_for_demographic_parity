@@ -1,10 +1,10 @@
 Implmentation for TMLR paper: *Retiring ΔDP: New Distribution-Level Metrics for Demographic Parity*, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
 
-# 1. Introduction
+## 1. Introduction
 
 Lots of fairness definitions (e.g., demographic parity, equalized opportunity) has been proposed to solve different types of fairness issues. In this paper, we focus on the measurement of demographic parity, $\Delta DP$, which requires the predictions of a machine learning model should be independent on sensitive attributes.
 
-## 1.1 Drawbacks of commonly used $\Delta DP$ 
+### 1.1 Drawbacks of commonly used $\Delta DP$ 
 In this paper, we rethink the rationale of $\Delta DP$ and investigate its limitations on measuring the violation of demographic parity. There are two commonly used implementations of $\Delta DP$, including $\Delta DP_c$ (i.e., the difference of the mean of the predictive probabilities between different groups, and $\Delta DP_b$ (i.e., the difference of the proportion of positive prediction between different groups. We argue that $\Delta DP$, as a metric, has the following drawbacks:
 1. **Zero-value $\Delta DP$ does not guarantee zero violation of demographic parity.** 
 <p align="center">
@@ -18,7 +18,7 @@ In this paper, we rethink the rationale of $\Delta DP$ and investigate its limit
 
 
 
-## 1.2 The Proposed **ABPC** & **ABCC**
+### 1.2 The Proposed **ABPC** & **ABCC**
 
 We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**robability density function **C**urves (ABPC) and **A**rea **B**etween **C**umulative density function **C**urves (ABCC), to retire $\Delta DP_{c}$ and $\Delta DP_{b}$ as follows: 
 ```math
@@ -36,10 +36,10 @@ We propose two *distribution-level* metrics, namely **A**rea **B**etween **P**ro
 
 
 
-# 2. Implementation 
+## 2. Implementation 
 
 
-## 2.1 Python package
+### 2.1 Python package
 ```
 torch                         1.10.0
 statsmodels                   0.13.1
@@ -49,19 +49,19 @@ numpy                         1.21.2
 aif360                        0.4.0
 ```
 
-## 2.2 Run cmd 
+### 2.2 Run cmd 
 run the following commands at current directy
 ```
 bash run.sh
 ```
 
 ```python
-CUDA_VISIBLE_DEVICES=0 python -u ./src/bs_tabular_mlp.py --data_path ./data/adult  --dataset adult --sensitive_attr sex --exp_name adult_mlp --batch_size 256 --epoch 10 --seed 31314
-CUDA_VISIBLE_DEVICES=0 python -u ./src/bs_tabular_reg.py --data_path ./data/adult  --dataset adult --sensitive_attr sex --exp_name adult_reg --batch_size 256 --epoch 10 --seed 31314 --lam 1
-CUDA_VISIBLE_DEVICES=0 python -u ./src/bs_tabular_adv.py --data_path ./data/adult --dataset adult --sensitive_attr sex --exp_name adult_adv --batch_size 256 --epoch 40 --seed 31314 --lam 170
+python -u ./src/bs_tabular_mlp.py --data_path ./data/adult  --dataset adult --sensitive_attr sex --exp_name adult_mlp --batch_size 256 --epoch 10 --seed 31314
+python -u ./src/bs_tabular_reg.py --data_path ./data/adult  --dataset adult --sensitive_attr sex --exp_name adult_reg --batch_size 256 --epoch 10 --seed 31314 --lam 1
+python -u ./src/bs_tabular_adv.py --data_path ./data/adult --dataset adult --sensitive_attr sex --exp_name adult_adv --batch_size 256 --epoch 40 --seed 31314 --lam 170
 ```
 
-## 2.3 Python Implementation for ABPC and ABCC
+### 2.3 Python Implementation for ABPC and ABCC
 ```python
 def ABPC( y_pred, y_gt, z_values, bw_method = "scott", sample_n = 5000 ):
 
@@ -109,7 +109,7 @@ def ABCC( y_pred, y_gt, z_values, sample_n = 10000 ):
     return abcc
 ```
 
-# 3. Citation
+## 3. Citation
 Please kindly cite the following paper if you found our code helpful!
 ```bibtex
   @article{han2023retiring,
@@ -119,3 +119,7 @@ Please kindly cite the following paper if you found our code helpful!
     year={2023}
   }
 ```
+
+
+## 4. Credit
+We use Github Copilot to generate some comments in important code. 
