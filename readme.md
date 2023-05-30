@@ -1,4 +1,4 @@
-Implmentation for TMLR paper: `Retiring $\Delta \text{DP}$: New Distribution-Level Metrics for Demographic Parity`, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
+Implmentation for TMLR paper: *Retiring ΔDP: New Distribution-Level Metrics for Demographic Parity*, [[Openreview](https://openreview.net/forum?id=LjDFIWWVVa)], [[Arxiv](https://arxiv.org/abs/2301.13443)], by Xiaotian Han*, Zhimeng Jiang*, Hongye Jin*, Zirui Liu, Na Zou, Qifan Wang, Xia Hu
 
 # 1. Introduction
 
